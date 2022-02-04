@@ -1,4 +1,4 @@
-import { TestInfo } from "../data/TestInfo";
+import { TestInfo } from "../../data/TestInfo";
 import { jestTextTransformer } from "./JestTextTransformer"
 
 describe('JestTextTransformer', () => {
@@ -132,6 +132,46 @@ describe('JestTextTransformer', () => {
                         tests: [
                             { name: 'Test2' }
                         ]
+                    }
+                ],
+                tests: []
+            }
+            
+            //Act
+            const output = jestTextTransformer.transform(testInfo);
+
+            //Assert
+            expect(output).toBe(expectedOutput);
+        })
+
+        it('should render multiple nestes groups correctly', () => {
+            //Arrange
+            const expectedOutput = "describe('Block1', () => {\n" + 
+                                    "  describe('Block2', () => {\n" + 
+                                    "  });\n" +
+                                    "\n" +
+                                    "  describe('Block3', () => {\n" + 
+                                    "  });\n" +
+                                    "});";
+
+
+            const testInfo: TestInfo = {
+                groups: [
+                    { 
+                        name: 'Block1',
+                        groups: [
+                            { 
+                                name: 'Block2',
+                                groups: [],
+                                tests: []
+                            },
+                            { 
+                                name: 'Block3',
+                                groups: [],
+                                tests: []
+                            }
+                        ],
+                        tests: []
                     }
                 ],
                 tests: []

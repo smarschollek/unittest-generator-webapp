@@ -1,5 +1,4 @@
-import { group } from "console"
-import { TestInfo } from "../data/TestInfo"
+import { TestInfo } from "../../data/TestInfo"
 import { testInfoGenerator } from "./TestInfoGenerator"
 
 describe('TestInfoGenerator', () => {
@@ -109,6 +108,43 @@ describe('TestInfoGenerator', () => {
                 '#Block 1', 
                 '##Block 2',
                 '###Block 3'
+            ].join('\n')
+
+            //Act
+            const actualTestInfo = testInfoGenerator.parse(input);
+
+            //Assert
+            expect(actualTestInfo).toEqual(expectedTestInfo);
+        })
+
+        test('should parse nested parallel block lines', () => {
+            //Arrange
+            const expectedTestInfo : TestInfo = {
+                groups: [
+                    {
+                        name: 'Block 1',
+                        groups: [
+                            { 
+                                name: 'Block 2',
+                                groups: [],
+                                tests: []
+                            },
+                            { 
+                                name: 'Block 3',
+                                groups: [],
+                                tests: []
+                            }
+                        ],
+                        tests: []
+                    }
+                ],
+                tests: []
+            };
+
+            const input = [
+                '#Block 1', 
+                '##Block 2',
+                '##Block 3'
             ].join('\n')
 
             //Act

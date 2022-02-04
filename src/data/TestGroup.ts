@@ -11,6 +11,6 @@ export const createTestGroup = (name : string) : TestGroup => {
     return {
         name,
         groups: [],
-        tests: []
-    }
+        tests: [],
+    };
 }

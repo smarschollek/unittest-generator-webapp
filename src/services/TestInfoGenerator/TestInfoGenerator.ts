@@ -1,6 +1,6 @@
-import { createTest, Test } from "../data/Test";
-import { createTestGroup, TestGroup } from "../data/TestGroup";
-import { TestInfo } from "../data/TestInfo";
+import { createTest } from "../../data/Test";
+import { TestGroup, createTestGroup } from "../../data/TestGroup";
+import { TestInfo } from "../../data/TestInfo";
 
 class TestInfoGenerator {
     parse(text: string) : TestInfo {
@@ -12,25 +12,32 @@ class TestInfoGenerator {
         const lines = text.split('\n')        
         let groupIndex = -1;
         let currentActiveGroup : TestGroup;
+        
+        const parents : { [key: number] : TestGroup } = {};
 
         lines.forEach(line => {
             const newGroupIndex = this.getGroupIndex(line);
             if(newGroupIndex !== 0) {
-                groupIndex = newGroupIndex
-
-                if(groupIndex === 1) {
+                if(newGroupIndex === 1) {
                     const newTestGroup = createTestGroup(line.replaceAll('#','').trim())
                     result.groups.push(newTestGroup);
+                    parents[1] = newTestGroup;
                     currentActiveGroup = newTestGroup;
                 } else {
                     const newTestGroup = createTestGroup(line.replaceAll('#','').trim())
-                    currentActiveGroup.groups.push(newTestGroup)
+                    if(parents[newGroupIndex - 1]) {
+                        parents[newGroupIndex - 1].groups.push(newTestGroup);
+                        parents[newGroupIndex] = newTestGroup;
+                    }
+
                     currentActiveGroup = newTestGroup;
                 }
+                
+                groupIndex = newGroupIndex;
             }
-            
+
             if(line === '') {
-                groupIndex = -1
+                groupIndex = -1;
             }
 
             if(line.startsWith('-')) {
@@ -38,7 +45,7 @@ class TestInfoGenerator {
                     result.tests.push(createTest(line.substring(1).trim()));
                 }
                 else {
-                    currentActiveGroup.tests.push(createTest(line.substring(1).trim()))
+                    currentActiveGroup.tests.push(createTest(line.substring(1).trim()));
                 }                
             }
         })
@@ -47,7 +54,7 @@ class TestInfoGenerator {
         return result
     }
 
-    
+
 
     private getGroupIndex(line: string) : number {
         return (line.match(new RegExp("#", "g")) || []).length

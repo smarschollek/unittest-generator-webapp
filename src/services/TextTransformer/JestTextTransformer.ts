@@ -1,6 +1,6 @@
-import { Test } from "../data/Test";
-import { TestGroup } from "../data/TestGroup";
-import { TestInfo } from "../data/TestInfo";
+import { Test } from "../../data/Test";
+import { TestGroup } from "../../data/TestGroup";
+import { TestInfo } from "../../data/TestInfo";
 import { ITextTransformer } from "./ITextTransformer";
 
 class JestTextTransformer implements ITextTransformer {
